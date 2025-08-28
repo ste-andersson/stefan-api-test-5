@@ -33,6 +33,26 @@ async def root():
 async def health():
     return {"status": "ok"}
 
+
+@app.get("/debug/elevenlabs")
+async def debug_elevenlabs():
+    import httpx
+    ok = False
+    status = None
+    detail = None
+    key_present = bool(settings.elevenlabs_api_key)
+    try:
+        async with httpx.AsyncClient(timeout=8.0) as client:
+            r = await client.get("https://api.elevenlabs.io/v1/user", headers={"xi-api-key": settings.elevenlabs_api_key} if settings.elevenlabs_api_key else {})
+            status = r.status_code
+            ok = r.status_code == 200
+            if not ok:
+                detail = r.text[:512]
+    except Exception as e:
+        detail = str(e)
+    return {"key_present": key_present, "model_id": settings.elevenlabs_model_id, "status": status, "ok": ok, "detail": detail}
+
+
 @app.get("/config.json")
 async def config(request: Request):
     scheme = request.url.scheme
