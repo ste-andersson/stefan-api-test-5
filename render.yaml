@@ -1,0 +1,17 @@
+
+services:
+  - type: web
+    name: stefan-api-test-5
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.0
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: ELEVENLABS_MODEL_ID
+        value: eleven_turbo_v2_5
+      - key: ELEVENLABS_VOICE_ID
+        sync: false
